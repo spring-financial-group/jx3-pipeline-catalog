@@ -36,7 +36,7 @@ spec:
     resources: {}
     script: |
       trivy image --skip-update --input /workspace/source/image.tar > /workspace/source/scanresults.txt
-  - image: ghcr.io/alexkondrat/container-tools:latest
+  - image: ghcr.io/jenkins-x/jx-boot:3.2.241
     name: analyze
     resources: {}
     script: |
@@ -50,7 +50,7 @@ spec:
       else
       echo "No vulnerabilities found."
       fi
-  - image: gcr.io/go-containerregistry/crane:debug
+  - image: gcr.io/go-containerregistry/crane/debug:f1fa40b162a1601a863364e8a2f63bbb9e4ff36e
     name: push-container
     resources: {}
     script: |
@@ -69,6 +69,6 @@ spec:
       cosign verify --key k8s://jx/cosign $PUSH_CONTAINER_REGISTRY/$DOCKER_REGISTRY_ORG/$APP_NAME:$VERSION
       rm /workspace/source/image.tar /workspace/source/scanresults.txt
   workspaces:
-  - description: Build, scan and push to ACR
+  - description: Build, scan and push to the registry
     mountPath: /workspace
     name: output
