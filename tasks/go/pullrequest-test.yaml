@@ -1,0 +1,85 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  creationTimestamp: null
+  name: pullrequest
+spec:
+  tasks:
+  - name: jx-variables
+    taskRef:
+      name: jx-variables
+      params:
+      - name: url
+        value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
+      - name: revision
+        value: tekton-conversion
+      - name: pathInRepo
+        value: tasks/go/jx-variables.yaml
+      resolver: git
+  - name: build-make-linux
+    runAfter:
+    - jx-variables
+    taskRef:
+      name: build-make-linux
+      params:
+      - name: url
+        value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
+      - name: revision
+        value: tekton-conversion
+      - name: pathInRepo
+        value: tasks/go/build-make-linux.yaml
+      resolver: git
+  - name: make-lint
+    runAfter:
+    - build-make-linux
+    taskRef:
+      name: make-lint
+      params:
+      - name: url
+        value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
+      - name: revision
+        value: tekton-conversion
+      - name: pathInRepo
+        value: tasks/go/make-lint.yaml
+      resolver: git
+  - name: check-registry
+    runAfter:
+    - make-lint
+    taskRef:
+      name: check-registry
+      params:
+      - name: url
+        value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
+      - name: revision
+        value: tekton-conversion
+      - name: pathInRepo
+        value: tasks/go/check-registry.yaml
+      resolver: git
+  - name: build-container-build
+    runAfter:
+    - check-registry
+    taskRef:
+      name: build-container-build
+      params:
+      - name: url
+        value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
+      - name: revision
+        value: tekton-conversion
+      - name: pathInRepo
+        value: tasks/go/build-container-build.yaml
+      resolver: git
+  - name: promote-jx-preview
+    runAfter:
+    - build-container-build
+    taskRef:
+      name: promote-jx-preview
+      params:
+      - name: url
+        value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
+      - name: revision
+        value: tekton-conversion
+      - name: pathInRepo
+        value: tasks/go/promote-jx-preview.yaml
+      resolver: git
+  workspaces:
+  - name: source
