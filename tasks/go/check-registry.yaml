@@ -4,9 +4,18 @@ metadata:
   creationTimestamp: null
   name: check-registry
 spec:
+  stepTemplate:
+    env:
+    - name: HOME
+      value: /tekton/home
+    envFrom:
+    - secretRef:
+        name: jx-boot-job-env-vars
+        optional: true
+    name: ""
+    resources: {}
+    workingDir: /workspace/source
   steps:
   - image: ghcr.io/jenkins-x/jx-registry:0.1.10
     name: ""
     resources: {}
-  workspaces:
-  - name: source

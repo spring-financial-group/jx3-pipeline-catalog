@@ -4,6 +4,17 @@ metadata:
   creationTimestamp: null
   name: jx-variables
 spec:
+  stepTemplate:
+    env:
+    - name: HOME
+      value: /tekton/home
+    envFrom:
+    - secretRef:
+        name: jx-boot-job-env-vars
+        optional: true
+    name: ""
+    resources: {}
+    workingDir: /workspace/source
   steps:
   - image: ghcr.io/jenkins-x/jx-boot:3.10.86
     name: ""
@@ -15,5 +26,3 @@ spec:
       #!/usr/bin/env sh
       jx gitops variables
       jx gitops pr variables
-  workspaces:
-  - name: source

@@ -4,6 +4,17 @@ metadata:
   creationTimestamp: null
   name: promote-jx-preview
 spec:
+  stepTemplate:
+    env:
+    - name: HOME
+      value: /tekton/home
+    envFrom:
+    - secretRef:
+        name: jx-boot-job-env-vars
+        optional: true
+    name: ""
+    resources: {}
+    workingDir: /workspace/source
   steps:
   - image: ghcr.io/jenkins-x-plugins/jx-preview:0.1.0
     name: ""
@@ -12,5 +23,3 @@ spec:
       #!/usr/bin/env sh
       source .jx/variables.sh
       jx preview create
-  workspaces:
-  - name: source
