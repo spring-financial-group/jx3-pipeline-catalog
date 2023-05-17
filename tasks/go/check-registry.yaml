@@ -1,0 +1,12 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  creationTimestamp: null
+  name: check-registry
+spec:
+  steps:
+  - image: ghcr.io/jenkins-x/jx-registry:0.1.10
+    name: ""
+    resources: {}
+  workspaces:
+  - name: source

@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  creationTimestamp: null
+  name: build-container-build
+spec:
+  steps:
+  - image: gcr.io/kaniko-project/executor:v1.9.1-debug
+    name: ""
+    resources: {}
+    script: |
+      #!/busybox/sh
+      source .jx/variables.sh
+      cp /tekton/creds/.docker/config.json /kaniko/.docker/config.json
+      /kaniko/executor $KANIKO_FLAGS --context=/workspace/source --dockerfile=${DOCKERFILE_PATH:-Dockerfile} --destination=$PUSH_CONTAINER_REGISTRY/$DOCKER_REGISTRY_ORG/$APP_NAME:$VERSION
+  workspaces:
+  - name: source

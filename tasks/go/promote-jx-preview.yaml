@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  creationTimestamp: null
+  name: promote-jx-preview
+spec:
+  steps:
+  - image: ghcr.io/jenkins-x-plugins/jx-preview:0.1.0
+    name: ""
+    resources: {}
+    script: |
+      #!/usr/bin/env sh
+      source .jx/variables.sh
+      jx preview create
+  workspaces:
+  - name: source
