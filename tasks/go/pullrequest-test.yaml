@@ -12,7 +12,7 @@ spec:
       - name: url
         value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
       - name: revision
-        value: tekton-conversion
+        value: master
       - name: pathInRepo
         value: tasks/go/jx-variables.yaml
       resolver: git
@@ -25,7 +25,7 @@ spec:
       - name: url
         value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
       - name: revision
-        value: tekton-conversion
+        value: master
       - name: pathInRepo
         value: tasks/go/build-make-linux.yaml
       resolver: git
@@ -38,7 +38,7 @@ spec:
       - name: url
         value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
       - name: revision
-        value: tekton-conversion
+        value: master
       - name: pathInRepo
         value: tasks/go/make-lint.yaml
       resolver: git
@@ -51,7 +51,7 @@ spec:
       - name: url
         value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
       - name: revision
-        value: tekton-conversion
+        value: master
       - name: pathInRepo
         value: tasks/go/check-registry.yaml
       resolver: git
@@ -64,7 +64,7 @@ spec:
       - name: url
         value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
       - name: revision
-        value: tekton-conversion
+        value: master
       - name: pathInRepo
         value: tasks/go/build-container-build.yaml
       resolver: git
@@ -77,7 +77,7 @@ spec:
       - name: url
         value: https://github.com/spring-financial-group/jx3-pipeline-catalog.git
       - name: revision
-        value: tekton-conversion
+        value: master
       - name: pathInRepo
         value: tasks/go/promote-jx-preview.yaml
       resolver: git
