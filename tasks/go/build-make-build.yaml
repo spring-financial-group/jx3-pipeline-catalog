@@ -90,6 +90,8 @@ spec:
     resources: {}
     script: |
       #!/bin/sh
+      ## Install the Swag CLI at the version specified in the go.mod file
+      cat ./go.mod | grep "swaggo/swag" | sed 's/ /\/cmd\/swag@/g' | xargs go install
       make build
   workspaces:
     - description: The git repo will be cloned onto the volume backing this workspace
