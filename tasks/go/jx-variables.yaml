@@ -86,7 +86,7 @@ spec:
     workingDir: /workspace/source
   steps:
   - image: ghcr.io/jenkins-x/jx-boot:3.10.86
-    name: ""
+    name: jx-variables
     resources:
       requests:
         cpu: 400m
