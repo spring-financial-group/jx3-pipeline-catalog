@@ -92,3 +92,7 @@ spec:
       #!/usr/bin/env sh
       source .jx/variables.sh
       jx preview create
+  workspaces:
+    - description: The git repo will be cloned onto the volume backing this workspace
+      mountPath: /workspace
+      name: output
