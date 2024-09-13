@@ -32,7 +32,7 @@ spec:
       git config --global credential.helper store
       if [ "$PULL_OPTIMISED" = "true" ]; then
         echo "Optimizing git clone for PR"
-        git clone --depth=20 --branch $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER $REPO_URL $SUBDIR
+        git clone --shallow-since="$(date -d '24 hours ago' --utc --iso-8601=seconds)" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
         git branch
         git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         cd $SUBDIR
