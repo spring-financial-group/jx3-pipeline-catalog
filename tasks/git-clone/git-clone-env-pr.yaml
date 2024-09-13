@@ -33,6 +33,7 @@ spec:
       if [ "$PULL_OPTIMISED" = "true" ]; then
         echo "Optimizing git clone for PR: git clone --depth=1 --branch $PULL_PULL_REF $REPO_URL $SUBDIR"
         git clone --depth=20 --branch $PULL_PULL_REF $REPO_URL $SUBDIR
+        git branch
         git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         cd $SUBDIR
         git reset --hard $PULL_PULL_SHA
