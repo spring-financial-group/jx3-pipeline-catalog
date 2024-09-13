@@ -24,6 +24,7 @@ spec:
     resources: {}
     script: |
       #!/bin/sh
+      set -x
       export SUBDIR="source"
       echo "git cloning url: $REPO_URL version $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
       git config --global --add user.name ${GIT_AUTHOR_NAME:-jenkins-x-bot}
@@ -31,7 +32,8 @@ spec:
       git config --global credential.helper store
       if [ "$PULL_OPTIMISED" = "true" ]; then
         echo "Optimizing git clone for PR: git clone --depth=1 --branch $PULL_PULL_REF $REPO_URL $SUBDIR"
-        git clone --depth=1 --branch $PULL_PULL_REF $REPO_URL $SUBDIR
+        git clone --depth=20 --branch $PULL_PULL_REF $REPO_URL $SUBDIR
+        git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         cd $SUBDIR
         git reset --hard $PULL_PULL_SHA
       else
