@@ -33,9 +33,10 @@ spec:
       if [ "$PULL_OPTIMISED" = "true" ]; then
         echo "Optimizing git clone for PR"
         git clone --shallow-since="$(date -d '24 hours ago' --utc --iso-8601=seconds)" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
-        git branch
-        git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         cd $SUBDIR
+        git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
+        git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
+        git branch
         git reset --hard $PULL_PULL_SHA
       else
         git clone $REPO_URL $SUBDIR
