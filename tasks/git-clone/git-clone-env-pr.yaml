@@ -32,7 +32,8 @@ spec:
       git config --global credential.helper store
       if [ "$PULL_OPTIMISED" = "true" ]; then
         echo "Optimizing git clone for PR"
-        git clone --shallow-since="$(date -u -Iseconds -d '24 hours ago')" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
+        # shallow clone 12 hours ago; use busybox date conventions
+        git clone --shallow-since="$(date -d "@$(( $(date +%s) - 12 * 60 * 60 ))")" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
         cd $SUBDIR
         git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
