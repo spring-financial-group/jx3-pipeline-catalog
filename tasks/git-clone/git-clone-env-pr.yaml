@@ -24,28 +24,16 @@ spec:
     resources: {}
     script: |
       #!/bin/sh
-      set -x
       export SUBDIR="source"
       echo "git cloning url: $REPO_URL version $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
       git config --global --add user.name ${GIT_AUTHOR_NAME:-jenkins-x-bot}
       git config --global --add user.email ${GIT_AUTHOR_EMAIL:-jenkins-x@googlegroups.com}
       git config --global credential.helper store
-      if [ "$PULL_OPTIMISED" = "true" ]; then
-        echo "Optimizing git clone for PR"
-        # shallow clone 12 hours ago; use busybox date conventions
-        git clone --shallow-since="$(date -d "@$(( $(date +%s) - 12 * 60 * 60 ))")" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
-        cd $SUBDIR
-        git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
-        git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
-        git branch
-        git reset --hard $PULL_PULL_SHA
-      else
-        git clone $REPO_URL $SUBDIR
-        cd $SUBDIR
-        git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
-        git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
-        git reset --hard $PULL_PULL_SHA
-      fi
+      git clone $REPO_URL $SUBDIR
+      cd $SUBDIR
+      git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
+      git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
+      git reset --hard $PULL_PULL_SHA
       echo "checked out revision: $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
     workingDir: /workspace
   - envFrom:
