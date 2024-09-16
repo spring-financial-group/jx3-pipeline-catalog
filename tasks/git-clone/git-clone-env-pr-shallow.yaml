@@ -25,30 +25,54 @@ spec:
       script: |
         #!/bin/sh
         set -x
+        rm -rf source
         export SUBDIR="source"
+        export PULL_BASE_REF="master"
+        export REPO_URL="https://github.com/spring-financial-group/JX3_Azure_Vault_Dev_Cluster.git"
+        #export JOB_NAME="verify"
+        #export PULL_NUMBER="37782"
+        #export PULL_PULL_SHA="6f09316b3d3b0516115049292cf855cf30025163"
         DEPTHS="100 200 500 1000 10000 50000"
-
-        echo "git cloning url: $REPO_URL version $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
-        git config --global --add user.name ${GIT_AUTHOR_NAME:-jenkins-x-bot}
-        git config --global --add user.email ${GIT_AUTHOR_EMAIL:-jenkins-x@googlegroups.com}
-        git config --global credential.helper store
+        
+        #echo "git cloning url: $REPO_URL version $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
+        #git config --global --add user.name ${GIT_AUTHOR_NAME:-jenkins-x-bot}
+        #git config --global --add user.email ${GIT_AUTHOR_EMAIL:-jenkins-x@googlegroups.com}
+        #git config --global credential.helper store
         echo "Optimizing git clone for PR"
+        CLONE_SUCCESS=0
         for depth in $DEPTHS; do
-        echo "Attempting shallow clone with depth $depth..."
-          if git clone --depth "$depth" --branch "$PULL_BASE_REF" "$REPO_URL" "$SUBDIR"; then
-            echo "Clone successful with depth $depth."
-        else
-          echo "Clone failed with depth $depth. Retrying with larger depth..."
-          rm -rf "$SUBDIR:?"/*  # Remove contents of $SUBDIR
-        fi
+            echo "Attempting shallow clone with depth $depth..."
+            if git clone --depth "$depth" --branch "$PULL_BASE_REF" "$REPO_URL" "$SUBDIR"; then
+                echo "Clone successful with depth $depth."
+                CLONE_SUCCESS=1
+                break  # Exit the loop since the clone was successful
+            else
+                echo "Clone failed with depth $depth. Retrying with larger depth..."
+                rm -rf "$SUBDIR:?"/*
+            fi
         done
-        echo "Shallow clone failed. Attempting full clone..."
-        if git clone --branch "$PULL_BASE_REF" "$REPO_URL" "$SUBDIR"; then
-          echo "Full clone successful."
+        # If the shallow clone attempts all fail, attempt a full clone
+        if [ "$CLONE_SUCCESS" -eq 0 ]; then
+            echo "Shallow clone failed. Attempting full clone..."
+            if git clone --branch "$PULL_BASE_REF" "$REPO_URL" "$SUBDIR"; then
+                echo "Full clone successful."
+                CLONE_SUCCESS=1
+            else
+                echo "Full clone failed. Aborting."
+                exit 1
+            fi
+        fi
+        if [ "$CLONE_SUCCESS" -eq 1 ]; then
+            echo "Proceeding with further steps after successful clone."
+            cd $SUBDIR || exit
+            git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
+            git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
+            git branch
+            git reset --hard $PULL_PULL_SHA
+            echo "checked out revision: $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
         else
-          echo "Full clone failed. Aborting."
-          rm -rf "$SUBDIR:?"/*  # Clean up in case of full clone failure
-        exit 1
+            echo "Cloning failed. Exiting."
+            exit 1
         fi
         git clone --shallow-since="$(date -d "@$(( $(date +%s) - 12 * 60 * 60 ))")" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
         cd $SUBDIR || exit
