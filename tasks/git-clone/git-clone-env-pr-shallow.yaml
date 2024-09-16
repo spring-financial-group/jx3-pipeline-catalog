@@ -26,8 +26,8 @@ spec:
         #!/bin/sh
         set -x
         export SUBDIR="source"
-        export DEPTHS=(100 200 1000 10000)
-        
+        DEPTHS=(100 200 1000 10000)
+
         echo "git cloning url: $REPO_URL version $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER@$PULL_PULL_SHA to dir: $SUBDIR"
         git config --global --add user.name ${GIT_AUTHOR_NAME:-jenkins-x-bot}
         git config --global --add user.email ${GIT_AUTHOR_EMAIL:-jenkins-x@googlegroups.com}
@@ -37,23 +37,21 @@ spec:
           echo "Attempting shallow clone with depth $depth..."
           if git clone --depth "$depth" --branch "$PULL_BASE_REF" "$REPO_URL" "$SUBDIR"; then
             echo "Clone successful with depth $depth."
-            exit 0
           else
             echo "Clone failed with depth $depth. Retrying with larger depth..."
-            rm -rf "$SUBDIR"/*  # Remove contents of $SUBDIR
+            rm -rf "$SUBDIR:?"/*  # Remove contents of $SUBDIR
           fi
         done
         echo "Shallow clone failed. Attempting full clone..."
         if git clone --branch "$PULL_BASE_REF" "$REPO_URL" "$SUBDIR"; then
-        echo "Full clone successful."
-        exit 0
+          echo "Full clone successful."
         else
           echo "Full clone failed. Aborting."
-          rm -rf "$SUBDIR"/*  # Clean up in case of full clone failure
+          rm -rf "$SUBDIR:?"/*  # Clean up in case of full clone failure
         exit 1
         fi
         git clone --shallow-since="$(date -d "@$(( $(date +%s) - 12 * 60 * 60 ))")" --branch $PULL_BASE_REF $REPO_URL $SUBDIR
-        cd $SUBDIR
+        cd $SUBDIR || exit
         git fetch origin $PULL_PULL_REF:$(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         git checkout $(echo $JOB_NAME | tr '[:lower:]' '[:upper:]')-$PULL_NUMBER
         git branch
