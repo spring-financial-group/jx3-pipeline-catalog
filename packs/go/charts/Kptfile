@@ -5,14 +5,14 @@ metadata:
 upstream:
   type: git
   git:
-    repo: https://github.com/jenkins-x/jx3-pipeline-catalog
+    repo: https://github.com/spring-financial-group/jx3-pipeline-catalog
     directory: /helm/charts
     ref: feat/helm-chart-update
   updateStrategy: resource-merge
 upstreamLock:
   type: git
   git:
-    repo: https://github.com/jenkins-x/jx3-pipeline-catalog
+    repo: https://github.com/spring-financial-group/jx3-pipeline-catalog
     directory: /helm/charts
     ref: feat/helm-chart-update
     commit: 2dbf5d40f57f5d40cc217b56b40f6aee1e039036
