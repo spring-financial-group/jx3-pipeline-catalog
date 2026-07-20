@@ -7,13 +7,13 @@ upstream:
   git:
     repo: https://github.com/jenkins-x/jx3-pipeline-catalog
     directory: /helm/charts
-    ref: master
+    ref: feat/helm-chart-update
   updateStrategy: resource-merge
 upstreamLock:
   type: git
   git:
     repo: https://github.com/jenkins-x/jx3-pipeline-catalog
     directory: /helm/charts
-    ref: master
-    commit: b52b35506a05e046d54615c3ade97f3aef8bfb08
+    ref: feat/helm-chart-update
+    commit: 2dbf5d40f57f5d40cc217b56b40f6aee1e039036
 pipeline: {}
