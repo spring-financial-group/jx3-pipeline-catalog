@@ -1,0 +1,3 @@
+config:
+- relativePath: helm
+  strategy: force-delete-replace
